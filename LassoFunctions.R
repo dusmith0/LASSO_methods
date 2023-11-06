@@ -12,9 +12,9 @@ standardizeXY <- function(X, Y){
   Xcentered <- x - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   weights <- sqrt(t(Xcentered) %*% Xcentered / n)
   normsX <- colSums(Xcentered ^ 2)/n
-  Xtidle <- Xcentered %*% diag(1/sqrt(normsX))
+  Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
   
-  sqrt(t(Xtidle) %*% Xtidle / n)
+  sqrt(t(Xtilde) %*% Xtilde / n)
   
   
   # Return:
