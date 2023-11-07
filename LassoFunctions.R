@@ -9,7 +9,7 @@ standardizeXY <- function(X, Y){
   # [ToDo] Center and scale X
   n <- nrow(X)
   Xmeans <- colMeans(X)
-  Xcentered <- x - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
+  Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   weights <- sqrt(t(Xcentered) %*% Xcentered / n)
   normsX <- colSums(Xcentered ^ 2)/n
   Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
@@ -29,14 +29,14 @@ standardizeXY <- function(X, Y){
 # [ToDo] Soft-thresholding of a scalar a at level lambda 
 # [OK to have vector version as long as works correctly on scalar; will only test on scalars]
 soft <- function(a, lambda){
-  ifelse(a > lambda,return(x - lambda),ifelse(a < lambda, return(x + lambda), return(0)))
+  ifelse(a > lambda,return(a - lambda),ifelse(a < lambda, return(a + lambda), return(0)))
 }
 
 soft2 <- function(a,lambda){ #I would like to test which is faster.
   if(a > lambda){
-    return(x - lambda)
-  }else if(x < lambda){
-    return(x + lambda)
+    return(a - lambda)
+  }else if(a < lambda){
+    return(a + lambda)
   }else{
     return(0)
   }
