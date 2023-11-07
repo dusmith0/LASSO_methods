@@ -29,7 +29,17 @@ standardizeXY <- function(X, Y){
 # [ToDo] Soft-thresholding of a scalar a at level lambda 
 # [OK to have vector version as long as works correctly on scalar; will only test on scalars]
 soft <- function(a, lambda){
+  ifelse(a > lambda,return(x - lambda),ifelse(a < lambda, return(x + lambda), return(0)))
+}
 
+soft2 <- function(a,lambda){ #I would like to test which is faster.
+  if(a > lambda){
+    return(x - lambda)
+  }else if(x < lambda){
+    return(x + lambda)
+  }else{
+    return(0)
+  }
 }
 
 # [ToDo] Calculate objective function of lasso given current values of Xtilde, Ytilde, beta and lambda
