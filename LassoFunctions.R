@@ -70,6 +70,12 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   #[ToDo]  Check for starting point beta_start. 
   # If none supplied, initialize with a vector of zeros.
   # If supplied, check for compatibility with Xtilde in terms of p
+  if(is.null(beta_start)){
+    beta_start <- rep(0,ncol(X))
+  }else if(ncol(Xtilde) != length(beta_start)){
+    stop(paste("Warning: Please input a beta_start length that matched the number or columns in X"))
+    
+  }
   
   #[ToDo]  Coordinate-descent implementation. 
   # Stop when the difference between objective functions is less than eps for the first time.
