@@ -81,7 +81,9 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   # Stop when the difference between objective functions is less than eps for the first time.
   # For example, if you have 3 iterations with objectives 3, 1, 0.99999,
   # your should return fmin = 0.99999, and not have another iteration
-  
+  while((Xtilde %*% beta_new - Xtilde %*% beta_newest) > eta){
+    
+  }
   # Return 
   # beta - the solution (a vector)
   # fmin - optimal function value (value of objective at beta, scalar)
