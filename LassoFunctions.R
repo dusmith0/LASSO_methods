@@ -49,7 +49,7 @@ soft2 <- function(a,lambda){ #I would like to test which is faster.
 # beta - value of beta at which to evaluate the function
 lasso <- function(Xtilde, Ytilde, beta, lambda){
  n = length(Ytilde)
- sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * abs(beta)
+ sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * sum(abs(beta))
 }
 
 # [ToDo] Fit LASSO on standardized data for a given lambda
