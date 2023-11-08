@@ -48,8 +48,8 @@ soft2 <- function(a,lambda){ #I would like to test which is faster.
 # lamdba - tuning parameter
 # beta - value of beta at which to evaluate the function
 lasso <- function(Xtilde, Ytilde, beta, lambda){
- n = length(Ytilde)
- sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * sum(abs(beta))
+  n = length(Ytilde)
+  sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * sum(abs(beta))
 }
 
 # [ToDo] Fit LASSO on standardized data for a given lambda
@@ -81,8 +81,18 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   # Stop when the difference between objective functions is less than eps for the first time.
   # For example, if you have 3 iterations with objectives 3, 1, 0.99999,
   # your should return fmin = 0.99999, and not have another iteration
-  while((Xtilde %*% beta_new - Xtilde %*% beta_newest) > eta){
+  beta <- beta_start
+  eps_check <- 100
+  while(eps_check > eps){
     
+    r <- Ytilde - Xtilde %*% beta_start
+    for(j in 1:ncol(Xtilde)){
+      beta_update[j] <- soft((beta[j] + t(X[,j]) %*% r / n),lambda)
+      r <- r + X[,j] * (beta[j] - beta_update[j])
+    }
+    eps_check <- lasso(Xtilde,Ytilde,beta,lambda) - (fmin <- lasso(Xtilde,Ytilde,beta_update,lambda))
+    beta <- beta_update
+    #fmin <- lasso(beta)
   }
   # Return 
   # beta - the solution (a vector)
