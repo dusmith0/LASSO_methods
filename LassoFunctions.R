@@ -115,13 +115,16 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   # and make sure the values are sorted from largest to smallest.
   # If none of the supplied values satisfy the requirement,
   # print the warning message and proceed as if the values were not supplied.
-  if()
+  if(!is.null(lambda_seq)){
+    lambda_seq <- sort(lambda_seq)
+    lambda_seq <- lambda_seq[-which(lambda_seq <= 0)]
+  }
   
   # If lambda_seq is not supplied, calculate lambda_max 
   # (the minimal value of lambda that gives zero solution),
   # and create a sequence of length n_lambda as
   if(is.null(lambda_seq)){
-    lambda_max <-   
+    lambda_max <- 100  #THis is not right, But maybe it will let me continue until I figure out to to find that.
     lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = n_lambda))
   }
   # [ToDo] Apply fitLASSOstandardized going from largest to smallest lambda 
