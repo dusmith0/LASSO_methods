@@ -10,7 +10,7 @@ standardizeXY <- function(X, Y){
   n <- nrow(X)
   Xmeans <- colMeans(X)
   Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
-  weights <- sqrt(t(Xcentered) %*% Xcentered / n)
+  weights <- sqrt(crossprod((Xcentered),Xcentered) / n)
   normsX <- colSums(Xcentered ^ 2)/n
   Xtilde <- View(Xcentered %*% diag(1/sqrt(norm1)))
 
@@ -85,12 +85,11 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   while(abs(eps_check) > eps){
     
     for(j in 1:ncol(Xtilde)){
-      beta_update[j] <- soft((beta[j] + t(X[,j]) %*% r / n),lambda)
+      beta_update[j] <- soft((beta[j] + crossprod(X[,j],r) / n),lambda)
       r <- r + X[,j] * (beta[j] - beta_update[j])
     }
     eps_check <- lasso(Xtilde,Ytilde,beta,lambda) - (fmin <- lasso(Xtilde,Ytilde,beta_update,lambda))
     beta <- beta_update
-    #fmin <- lasso(beta)
   }
   # Return 
   # beta - the solution (a vector)
@@ -124,13 +123,13 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   # (the minimal value of lambda that gives zero solution),
   # and create a sequence of length n_lambda as
   if(is.null(lambda_seq)){
-    lambda_max <- 100  #THis is not right, But maybe it will let me continue until I figure out to to find that.
+    lambda_max <- max(crossprod(X,Y)/nrow(X))
     lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = n_lambda))
   }
   # [ToDo] Apply fitLASSOstandardized going from largest to smallest lambda 
   # (make sure supplied eps is carried over). 
   # Use warm starts strategy discussed in class for setting the starting values.
-  
+  apply(lambda_seq, 1, fitLASSOstandardized(Xtilde,Ytilde, lambda_seq, beta_start = ))
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
   # beta_mat - p x length(lambda_seq) matrix of corresponding solutions at each lambda value

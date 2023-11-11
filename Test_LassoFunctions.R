@@ -1,5 +1,5 @@
 #### This script is to store my tests for the LassoFunctions
-
+library(microbenchmark)
 ##Super simple set of data, note the Y-intercept should not be present. 
 X <- matrix(c(rep(1,5),1:5),nrow=5)
 beta <- c(2,3) 
@@ -63,7 +63,7 @@ lasso(Xtilde,Ytilde,beta,.4)
 ##Using Example 2 with my LASSO Update
 beta_start = NULL
 eps = 0.001
-lambda <- .000003
+lambda <- 1.44
 
 if(is.null(beta_start)){
   beta_start <- rep(0,ncol(X))
@@ -75,6 +75,8 @@ if(is.null(beta_start)){
 beta <- beta_update <- beta_start
 eps_check <- 100
 r <- new$Ytilde - new$Xtilde %*% beta_start
+
+microbenchmark( ##ll milliseconds
 while(abs(eps_check) > eps){
   
   for(j in 1:ncol(new$Xtilde)){
@@ -83,11 +85,29 @@ while(abs(eps_check) > eps){
   }
   eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
   beta <- beta_update
-  #fmin <- lasso(beta)
-}
+},
+times = 200L
+)
+
+microbenchmark( ##11.79 milliseconds
+  while(abs(eps_check) > eps){
+    
+    for(j in 1:ncol(new$Xtilde)){
+      beta_update[j] <- soft((beta[j] + crossprod(X[j],r) / n),lambda)
+      r <- r + X[,j]*(beta[j] - beta_update[j])
+    }
+    eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
+    beta <- beta_update
+  },
+  times = 200L
+)
 
 fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
 
+
+microbenchmark( #3.5 microseconds
+  lasso(new$Xtilde,new$Ytilde,beta,.4)
+)
 
 ##Tyring to see what the Riboflavin data does.
 new <- standardizeXY(X,Y)
