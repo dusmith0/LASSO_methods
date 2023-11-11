@@ -12,11 +12,8 @@ standardizeXY <- function(X, Y){
   Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   weights <- sqrt(t(Xcentered) %*% Xcentered / n)
   normsX <- colSums(Xcentered ^ 2)/n
-  Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
-  
-  sqrt(t(Xtilde) %*% Xtilde / n)
-  
-  
+  Xtilde <- View(Xcentered %*% diag(1/sqrt(norm1)))
+
   # Return:
   # Xtilde - centered and appropriately scaled X
   # Ytilde - centered Y
@@ -60,7 +57,7 @@ lasso <- function(Xtilde, Ytilde, beta, lambda){
 # eps - precision level for convergence assessment, default 0.001
 fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps = 0.001){
   #[ToDo]  Check that n is the same between Xtilde and Ytilde
-  if(nrow(Xtilde) != nrow(Ytilde)){
+  if(nrow(Xtilde) != length(Ytilde)){
     stop(paste("It seems that your standardized and centered X and Y do not have the equivalent amount of rows."))
   }
   #[ToDo]  Check that lambda is non-negative
@@ -110,19 +107,23 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
 # eps - precision level for convergence assessment, default 0.001
 fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   # [ToDo] Check that n is the same between Xtilde and Ytilde
- 
+  if(nrow(Xtilde) != nrow(Ytilde)){
+    stop(paste("It seems that your standardized and centered X and Y do not have the equivalent amount of rows."))
+  }
   # [ToDo] Check for the user-supplied lambda-seq (see below)
   # If lambda_seq is supplied, only keep values that are >= 0,
   # and make sure the values are sorted from largest to smallest.
   # If none of the supplied values satisfy the requirement,
   # print the warning message and proceed as if the values were not supplied.
-  
+  if()
   
   # If lambda_seq is not supplied, calculate lambda_max 
   # (the minimal value of lambda that gives zero solution),
   # and create a sequence of length n_lambda as
-  lambda_seq = exp(seq(log(lambda_max), log(0.01), length = n_lambda))
-  
+  if(is.null(lambda_seq)){
+    lambda_max <-   
+    lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = n_lambda))
+  }
   # [ToDo] Apply fitLASSOstandardized going from largest to smallest lambda 
   # (make sure supplied eps is carried over). 
   # Use warm starts strategy discussed in class for setting the starting values.

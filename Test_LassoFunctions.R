@@ -63,7 +63,7 @@ lasso(Xtilde,Ytilde,beta,.4)
 ##Using Example 2 with my LASSO Update
 beta_start = NULL
 eps = 0.001
-lambda <- 3
+lambda <- .000003
 
 if(is.null(beta_start)){
   beta_start <- rep(0,ncol(X))
@@ -87,3 +87,9 @@ while(abs(eps_check) > eps){
 }
 
 fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
+
+
+##Tyring to see what the Riboflavin data does.
+new <- standardizeXY(X,Y)
+nrow(new$Ytilde)
+
