@@ -75,7 +75,7 @@ if(is.null(beta_start)){
 beta <- beta_update <- beta_start
 eps_check <- 100
 r <- new$Ytilde - new$Xtilde %*% beta_start
-while(eps_check > eps){
+while(abs(eps_check) > eps){
   
   for(j in 1:ncol(new$Xtilde)){
     beta_update[j] <- soft((beta[j] + (t(X[,j]) %*% r) / n),lambda)
@@ -85,3 +85,5 @@ while(eps_check > eps){
   beta <- beta_update
   #fmin <- lasso(beta)
 }
+
+fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
