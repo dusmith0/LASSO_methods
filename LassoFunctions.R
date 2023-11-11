@@ -83,9 +83,10 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   # your should return fmin = 0.99999, and not have another iteration
   beta <- beta_start
   eps_check <- 100
+  r <- Ytilde - Xtilde %*% beta_start
+  
   while(eps_check > eps){
     
-    r <- Ytilde - Xtilde %*% beta_start
     for(j in 1:ncol(Xtilde)){
       beta_update[j] <- soft((beta[j] + t(X[,j]) %*% r / n),lambda)
       r <- r + X[,j] * (beta[j] - beta_update[j])

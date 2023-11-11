@@ -74,11 +74,11 @@ if(is.null(beta_start)){
 
 beta <- beta_update <- beta_start
 eps_check <- 100
+r <- new$Ytilde - new$Xtilde %*% beta_start
 while(eps_check > eps){
   
-  r <- new$Ytilde - new$Xtilde %*% beta_start
   for(j in 1:ncol(new$Xtilde)){
-    beta_update[j] <- soft((beta[j] + t(X[,j]) %*% r / n),lambda)
+    beta_update[j] <- soft((beta[j] + (t(X[,j]) %*% r) / n),lambda)
     r <- r + X[,j]*(beta[j] - beta_update[j])
   }
   eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
