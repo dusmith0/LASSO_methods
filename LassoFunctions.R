@@ -128,9 +128,16 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   }
   # [ToDo] Apply fitLASSOstandardized going from largest to smallest lambda 
   # (make sure supplied eps is carried over). 
+  beta_mat <- matrix(0,nrow = ncol(Xtilde), ncol = length(lambda_seq))
+  fmin_vec <- rep(0,n_lambda)
   # Use warm starts strategy discussed in class for setting the starting values.
+  beta_start <- NULL
+  
   for(i in seq_along(lambda_seq)){
-  apply(lambda_seq, 1, fitLASSOstandardized(Xtilde,Ytilde, lambda_seq, beta_start = NULL))
+    new <- fitLASSOstandardized(Xtilde,Ytilde, lambda_seq[i], beta_start = beta_start,eps = eps)
+    #beta_start <- new$beta
+    beta_mat[,i] <- new$beta
+    fmin_vec[i] <- new$fmin
   }
   
   # Return output
