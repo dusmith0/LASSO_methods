@@ -9,11 +9,16 @@ standardizeXY <- function(X, Y){
   # [ToDo] Center and scale X
   n <- nrow(X)
   Xmeans <- colMeans(X)
-  Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
-  weights <- sqrt(crossprod((Xcentered),Xcentered) / n)
-  normsX <- colSums(Xcentered ^ 2)/n
-  Xtilde <- View(Xcentered %*% diag(1/sqrt(norm1)))
+  
+  #Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
+  #weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
+  #normsX <- colSums(Xcentered ^ 2)/n
+  #Xtilde <- Xcentered %*% diag(1/sqrt(norm1))
 
+  Xcentered <- scale(X,scale = FALSE)
+  weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
+  Xtilde <- scale(Xcentered, center = FALSE, scale = weights)
+  
   # Return:
   # Xtilde - centered and appropriately scaled X
   # Ytilde - centered Y

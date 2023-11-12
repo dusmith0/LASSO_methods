@@ -139,3 +139,9 @@ microbenchmark( ##12.5669 milliseconds
 new <- standardizeXY(X,Y)
 nrow(new$Ytilde)
 
+
+##Checking speeds on my standardizeXY
+microbenchmark(#seems to be taking around 30 milliseconds.
+  standardizeXY(X,Y),
+  times = 20L
+)
