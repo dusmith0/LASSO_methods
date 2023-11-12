@@ -161,13 +161,12 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   new <- standardizeXY(X,Y)
   # [ToDo] Fit Lasso on a sequence of values using fitLASSOstandardized_seq
   # (make sure the parameters carry over)
-  fitLASSOstandardized_seq(new$Xtilde,new$Ytidle,lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+  seq <- fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+  lambda_seq <- seq$lambda_seq
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
-  n <- nrow(X)
-  Xmeans <- colMeans(X)
-  Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
-  normsX <- colSums(Xcentered ^ 2)/n
+  Xcentered <- X - matrix(new$Xmeans, nrow(X), ncol(X), byrow = TRUE)
+  normsX <- colSums(Xcentered ^ 2)/nrow(X)
   beta_original <- diag(1/sqrt(normsX)) %*% beta_mat
   beta_intercept <- mean(Y) - colSums(colMeans(Xtilde) * beta_mat)
   beta0_vec <- rbind(beta_intercept,beta_mat)
