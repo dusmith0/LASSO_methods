@@ -46,6 +46,9 @@ new <- standardizeXY(X,Y)
 n <- nrow(X)
 sqrt(t(new$Xtilde) %*% new$Xtilde / n)
 #++++ Ends
+#++++ For ease of inputing into functions
+Xtilde <- new$Xtilde
+Ytilde <- new$Ytilde
 
 ##Example 2 centered calculations
 meanY = mean(Y)

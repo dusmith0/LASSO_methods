@@ -106,7 +106,7 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
 # eps - precision level for convergence assessment, default 0.001
 fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   # [ToDo] Check that n is the same between Xtilde and Ytilde
-  if(nrow(Xtilde) != nrow(Ytilde)){
+  if(nrow(Xtilde) != length(Ytilde)){
     stop(paste("It seems that your standardized and centered X and Y do not have the equivalent amount of rows."))
   }
   # [ToDo] Check for the user-supplied lambda-seq (see below)
@@ -115,7 +115,7 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   # If none of the supplied values satisfy the requirement,
   # print the warning message and proceed as if the values were not supplied.
   if(!is.null(lambda_seq)){
-    lambda_seq <- sort(lambda_seq)
+    lambda_seq <- sort(lambda_seq,decreacing = TRUE)
     lambda_seq <- lambda_seq[-which(lambda_seq <= 0)]
   }
   
@@ -123,13 +123,16 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   # (the minimal value of lambda that gives zero solution),
   # and create a sequence of length n_lambda as
   if(is.null(lambda_seq)){
-    lambda_max <- max(crossprod(X,Y)/nrow(X))
+    lambda_max <- max(crossprod(Xtilde,Ytilde)/nrow(Xtilde))
     lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = n_lambda))
   }
   # [ToDo] Apply fitLASSOstandardized going from largest to smallest lambda 
   # (make sure supplied eps is carried over). 
   # Use warm starts strategy discussed in class for setting the starting values.
-  apply(lambda_seq, 1, fitLASSOstandardized(Xtilde,Ytilde, lambda_seq, beta_start = ))
+  for(i in seq_along(lambda_seq)){
+  apply(lambda_seq, 1, fitLASSOstandardized(Xtilde,Ytilde, lambda_seq, beta_start = NULL))
+  }
+  
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
   # beta_mat - p x length(lambda_seq) matrix of corresponding solutions at each lambda value
