@@ -158,13 +158,15 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
 # eps - precision level for convergence assessment, default 0.001
 fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   # [ToDo] Center and standardize X,Y based on standardizeXY function
- 
+  new <- standardizeXY(X,Y)
   # [ToDo] Fit Lasso on a sequence of values using fitLASSOstandardized_seq
   # (make sure the parameters carry over)
- 
+  fitLASSOstandardized_seq(new$Xtilde,new$Ytidle,lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
   
+  beta_intercept <- mean(Y) - colSums(colMeans(Xtilde) * beta_mat)
+  beta0_vec <- rbind(beta_intercept,beta_mat)
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
   # beta_mat - p x length(lambda_seq) matrix of corresponding solutions at each lambda value (original data without center or scale)
