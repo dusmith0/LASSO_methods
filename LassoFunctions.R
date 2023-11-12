@@ -170,9 +170,7 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   lambda_seq <- seq$lambda_seq
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
-  Xcentered <- X - matrix(new$Xmeans, nrow(X), ncol(X), byrow = TRUE)
-  normsX <- colSums(Xcentered ^ 2)/nrow(X)
-  beta_original <- diag(1/sqrt(normsX)) %*% beta_mat
+  beta_original <- diag(1/sqrt(new$weights)) %*% beta_mat
   beta_intercept <- mean(Y) - colSums(colMeans(Xtilde) * beta_mat)
   beta0_vec <- rbind(beta_intercept,beta_mat)
   # Return output
