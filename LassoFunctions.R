@@ -136,7 +136,6 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   fmin_vec <- rep(0,n_lambda)
   # Use warm starts strategy discussed in class for setting the starting values.
   beta_start <- NULL
-  
   for(i in seq_along(lambda_seq)){
     new <- fitLASSOstandardized(Xtilde,Ytilde, lambda_seq[i], beta_start = beta_start,eps = eps)
     beta_start <- new$beta

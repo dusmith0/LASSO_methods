@@ -118,8 +118,13 @@ microbenchmark( ##12.5669 milliseconds
   times = 2000L
 )
 
-fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
+##Testing to see if my functions actually run.
 
+fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
+fitLASSOstandardized_seq(Xtilde,Ytilde,lambda_seq=NULL,n_lambda = 60,eps=.001)
+
+##checking to ensure that I actually end with zeroed betas at a large lambda.
+fitLASSOstandardized(new$Xtilde,new$Ytilde,2,beta_start = NULL, eps = .001)
 
 microbenchmark( #3.5 microseconds
   lasso(new$Xtilde,new$Ytilde,beta,.4)
