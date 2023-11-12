@@ -26,17 +26,21 @@ standardizeXY <- function(X, Y){
 # [ToDo] Soft-thresholding of a scalar a at level lambda 
 # [OK to have vector version as long as works correctly on scalar; will only test on scalars]
 soft <- function(a, lambda){
-  ifelse(a > lambda,return(a - lambda),ifelse(a < lambda, return(a + lambda), return(0)))
+  ifelse(a > lambda,return(a - lambda),ifelse(a < -lambda, return(a + lambda), return(0)))
 }
 
 soft2 <- function(a,lambda){ #I would like to test which is faster.
   if(a > lambda){
     return(a - lambda)
-  }else if(a < lambda){
+  }else if(a < -lambda){
     return(a + lambda)
   }else{
     return(0)
   }
+}
+
+soft3 <- function(a,lambda){
+  sign(a) * max(abs(a) - lambda,0)
 }
 
 # [ToDo] Calculate objective function of lasso given current values of Xtilde, Ytilde, beta and lambda
@@ -135,7 +139,7 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   
   for(i in seq_along(lambda_seq)){
     new <- fitLASSOstandardized(Xtilde,Ytilde, lambda_seq[i], beta_start = beta_start,eps = eps)
-    #beta_start <- new$beta
+    beta_start <- new$beta
     beta_mat[,i] <- new$beta
     fmin_vec[i] <- new$fmin
   }

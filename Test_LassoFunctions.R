@@ -79,7 +79,7 @@ beta <- beta_update <- beta_start
 eps_check <- 100
 r <- new$Ytilde - new$Xtilde %*% beta_start
 
-microbenchmark( ##ll milliseconds
+microbenchmark( ##13.7627 milliseconds
 while(abs(eps_check) > eps){
   
   for(j in 1:ncol(new$Xtilde)){
@@ -89,10 +89,10 @@ while(abs(eps_check) > eps){
   eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
   beta <- beta_update
 },
-times = 200L
+times = 2000L
 )
 
-microbenchmark( ##11.79 milliseconds
+microbenchmark( ##12.4169 milliseconds
   while(abs(eps_check) > eps){
     
     for(j in 1:ncol(new$Xtilde)){
@@ -102,7 +102,20 @@ microbenchmark( ##11.79 milliseconds
     eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
     beta <- beta_update
   },
-  times = 200L
+  times = 2000L
+)
+
+microbenchmark( ##12.5669 milliseconds
+  while(abs(eps_check) > eps){
+    
+    for(j in 1:ncol(new$Xtilde)){
+      beta_update[j] <- soft3((beta[j] + crossprod(X[j],r) / n),lambda)
+      r <- r + X[,j]*(beta[j] - beta_update[j])
+    }
+    eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
+    beta <- beta_update
+  },
+  times = 2000L
 )
 
 fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
