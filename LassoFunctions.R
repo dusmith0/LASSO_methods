@@ -191,13 +191,19 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
 # eps - precision level for convergence assessment, default 0.001
 cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NULL, eps = 0.001){
   # [ToDo] Fit Lasso on original data using fitLASSO
- 
+  fitLASSO(X = X , Y = Y, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
   # [ToDo] If fold_ids is NULL, split the data randomly into k folds.
   # If fold_ids is not NULL, split the data according to supplied fold_ids.
-  
+  if(is.null(fold_ids)){
+    fold_ids <- sample(1:n) %% k + 1
+  }
   # [ToDo] Calculate LASSO on each fold using fitLASSO,
   # and perform any additional calculations needed for CV(lambda) and SE_CV(lambda)
-  
+  errors <- matrix(NA,nrow(X),n_lambda)
+  for(fold in 1:k){
+    beta_cv <- fitLASSO(X = X[fold_ids != fold, ], Y = Y[fold_ids != fold], lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+    errors[fold_isd == fold, i] <- (Y[fold_ids == fold] - beta_cv[1,] - X[fold_ids == fold,]) 
+  }
   # [ToDo] Find lambda_min
 
   # [ToDo] Find lambda_1SE
