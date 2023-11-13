@@ -63,7 +63,7 @@ Xtilde = Xcentered %*% diag(1/sqrt(normsX))
 lasso(Xtilde,Ytilde,beta,.4)
 
 ##Testing to see if my functions actually run.
-
+lambda <- .5
 fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
 fitLASSOstandardized_seq(Xtilde,Ytilde,lambda_seq=NULL,n_lambda = 60,eps=.001)
 

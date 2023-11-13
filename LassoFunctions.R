@@ -87,7 +87,7 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   # Stop when the difference between objective functions is less than eps for the first time.
   # For example, if you have 3 iterations with objectives 3, 1, 0.99999,
   # your should return fmin = 0.99999, and not have another iteration
-  beta <- beta_start
+  beta <- beta_update <- beta_start
   eps_check <- 100
   r <- Ytilde - Xtilde %*% beta_start
   
@@ -168,10 +168,11 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   # (make sure the parameters carry over)
   seq <- fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
   lambda_seq <- seq$lambda_seq
+  beta_mat <- seq$beta_mat
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
   beta_original <- diag(1/sqrt(new$weights)) %*% beta_mat
-  beta_intercept <- mean(Y) - colSums(colMeans(Xtilde) * beta_mat)
+  beta_intercept <- mean(Y) - colSums(colMeans(new$Xtilde) * beta_mat)
   beta0_vec <- rbind(beta_intercept,beta_mat)
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
@@ -201,10 +202,13 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   # and perform any additional calculations needed for CV(lambda) and SE_CV(lambda)
   errors <- matrix(NA,nrow(X),n_lambda)
   for(fold in 1:k){
-    beta_cv <- fitLASSO(X = X[fold_ids != fold, ], Y = Y[fold_ids != fold], lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
-    errors[fold_isd == fold, i] <- (Y[fold_ids == fold] - beta_cv[1,] - X[fold_ids == fold,]) 
+    out <- fitLASSO(X = X[fold_ids != fold, ], Y = Y[fold_ids != fold], lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+    errors[fold_isd == fold, i] <- (Y[fold_ids == fold] - out$beta_vec[1,] - X[fold_ids == fold,] %*% out$beta_vec[-1,]) 
   }
+  cvm <- colMeans(errors)
+  
   # [ToDo] Find lambda_min
+  lambda_min <- min(cvm)
 
   # [ToDo] Find lambda_1SE
   
