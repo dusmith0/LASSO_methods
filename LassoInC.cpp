@@ -12,14 +12,14 @@ double soft_c(double a, double lambda){
     return(a + lambda);
   }else{
     return(0);
-  };
-
+  }
+}
 // Lasso objective function, returns scalar
 // [[Rcpp::export]]
 double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta, double lambda){
   // Your function code goes here
   int n = sizeof(Ytilde);
-  double obj = sum(std::pow(Ytilde - Xtilde * beta,2))/(2 * n) + lambda * sum(arma::abs(beta));
+  double obj = sum(pow(Ytilde - Xtilde * beta,2))/(2 * n) + lambda * sum(arma::abs(beta));
   return obj;
 }
 
