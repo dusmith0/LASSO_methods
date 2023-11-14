@@ -59,6 +59,11 @@ lasso <- function(Xtilde, Ytilde, beta, lambda){
   sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * sum(abs(beta))
 }
 
+lasso2 <- function(Xtilde, Ytilde, beta, lambda){
+  n = length(Ytilde)
+  sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * sum(abs(beta))
+}
+
 # [ToDo] Fit LASSO on standardized data for a given lambda
 # Xtilde - centered and scaled X, n x p
 # Ytilde - centered Y, n x 1 (vector)
