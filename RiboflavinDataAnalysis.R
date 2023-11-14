@@ -33,7 +33,7 @@ microbenchmark(##2 seconds
 fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001),times=1L
 )
 microbenchmark(
-fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq=NULL,n_lambda = 60,eps=.001),times=1L
+fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq=NULL,n_lambda = 5,eps=.001),times=1L
 )
 # [ToDo] Report your median timing in the comments here: (~5.8 sec for Irina on her laptop)
 
