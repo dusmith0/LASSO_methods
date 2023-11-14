@@ -19,7 +19,7 @@ Y = riboflavin$y
 source("LassoFunctions.R")
 
 # [ToDo] Use your fitLASSO function on the riboflavin data with 60 tuning parameters
-
+fitLASSO(X,Y)
 # [ToDo] Based on the above output, plot the number of non-zero elements in each beta versus the value of tuning parameter
 
 # [ToDo] Use microbenchmark 10 times to check the timing of your fitLASSO function above with 60 tuning parameters

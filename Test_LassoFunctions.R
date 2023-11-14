@@ -67,6 +67,7 @@ lambda <- .5
 fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001)
 fitLASSOstandardized_seq(Xtilde,Ytilde,lambda_seq=NULL,n_lambda = 60,eps=.001)
 
+
 ##checking to ensure that I actually end with zeroed betas at a large lambda.
 fitLASSOstandardized(new$Xtilde,new$Ytilde,2,beta_start = NULL, eps = .001)
 

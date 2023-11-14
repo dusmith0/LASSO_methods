@@ -9,15 +9,16 @@ standardizeXY <- function(X, Y){
   # [ToDo] Center and scale X
   n <- nrow(X)
   Xmeans <- colMeans(X)
+  Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
+  Xtilde = scale(X)* sqrt(n/(n-1))
   
-  #Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   #weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
   #normsX <- colSums(Xcentered ^ 2)/n
-  #Xtilde <- Xcentered %*% diag(1/sqrt(norm1))
+  #Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
 
-  Xcentered <- scale(X,scale = FALSE)
-  weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
-  Xtilde <- scale(Xcentered, center = FALSE, scale = weights)
+  #Xcentered <- scale(X,scale = FALSE)
+  #weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
+  #Xtilde <- scale(Xcentered, center = FALSE, scale = weights)
   
   # Return:
   # Xtilde - centered and appropriately scaled X
@@ -94,9 +95,10 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   while(abs(eps_check) > eps){
     
     for(j in 1:ncol(Xtilde)){
-      beta_update[j] <- soft((beta[j] + crossprod(X[,j],r) / n),lambda)
+      beta_update[j] <- soft((beta[j] + crossprod(Xtilde[,j],r) / n),lambda)
       r <- r + X[,j] * (beta[j] - beta_update[j])
     }
+
     eps_check <- lasso(Xtilde,Ytilde,beta,lambda) - (fmin <- lasso(Xtilde,Ytilde,beta_update,lambda))
     beta <- beta_update
   }
