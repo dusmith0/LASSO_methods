@@ -180,7 +180,7 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
   beta_original <- diag(1/sqrt(new$normsX)) %*% beta_mat
-  beta_intercept <- mean(Y) - colSums(colMeans(X) * beta_mat)
+  beta_intercept <- mean(Y) - colSums(colMeans(X) * beta_original)
   beta0_vec <- rbind(beta_intercept,beta_mat)
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
