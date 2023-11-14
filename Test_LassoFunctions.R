@@ -72,8 +72,17 @@ fitLASSOstandardized_seq(Xtilde,Ytilde,lambda_seq=NULL,n_lambda = 60,eps=.001)
 fitLASSOstandardized(new$Xtilde,new$Ytilde,2,beta_start = NULL, eps = .001)
 
 microbenchmark( #3.5 microseconds
-  lasso(new$Xtilde,new$Ytilde,beta,.4)
+  lasso(new$Xtilde,new$Ytilde,beta,lambda=.4),times=200L
 )
+
+microbenchmark( #3.5 microseconds  This one contained the as.numeric(crossprod trick. It is still slower.)
+  lasso2(new$Xtilde,new$Ytilde,beta,lambda=.4),times=200L
+)
+
+lasso2 <- function(Xtilde, Ytilde, beta, lambda){
+  n = length(Ytilde)
+  as.numeric(crossprod(Ytilde - Xtilde %*% beta))/(2 * n) + lambda * sum(abs(beta))
+}
 
 ##Checking to see if fitLASSO runs.
 microbenchmark(
@@ -106,7 +115,7 @@ while(abs(eps_check) > eps){
   eps_check <- lasso(new$Xtilde,new$Ytilde,beta,lambda) - (fmin <- lasso(new$Xtilde,new$Ytilde,beta_update,lambda))
   beta <- beta_update
 },
-times = 2000L
+times = 200L
 )
 
 microbenchmark( ##12.4169 milliseconds
