@@ -44,7 +44,8 @@ Y = beta0 + X %*% beta + sigma * rnorm(n)
 
 new <- standardizeXY(X,Y)
 n <- nrow(X)
-sqrt(t(new$Xtilde) %*% new$Xtilde / n)
+(t(new$Xtilde) %*% new$Xtilde / n)
+edit((t(new$Xtilde) %*% new$Xtilde / n))
 #++++ Ends
 #++++ For ease of inputing into functions
 Xtilde <- new$Xtilde

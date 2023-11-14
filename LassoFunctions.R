@@ -11,10 +11,10 @@ standardizeXY <- function(X, Y){
   Xmeans <- colMeans(X)
   Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
-  Xtilde = scale(X)* sqrt(n/(n-1))
+  #Xtilde = scale(X)* sqrt(n/(n-1))
   
-  #normsX <- colSums(Xcentered ^ 2)/n
-  #Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
+  normsX <- colSums(Xcentered ^ 2)/n
+  Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
 
   #Xcentered <- scale(X,scale = FALSE)
   #weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
@@ -146,6 +146,7 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   # (make sure supplied eps is carried over). 
   beta_mat <- matrix(0,nrow = ncol(Xtilde), ncol = length(lambda_seq))
   fmin_vec <- rep(0,n_lambda)
+  
   # Use warm starts strategy discussed in class for setting the starting values.
   beta_start <- NULL
   for(i in seq_along(lambda_seq)){
@@ -178,8 +179,8 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   beta_mat <- seq$beta_mat
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
-  beta_original <- diag(1/sqrt(new$weights)) %*% beta_mat
-  beta_intercept <- mean(Y) - colSums(colMeans(new$Xtilde) * beta_mat)
+  beta_original <- diag(1/sqrt(new$normsX)) %*% beta_mat
+  beta_intercept <- mean(Y) - colSums(colMeans(X) * beta_mat)
   beta0_vec <- rbind(beta_intercept,beta_mat)
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used

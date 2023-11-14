@@ -24,7 +24,7 @@ fitLASSO(X,Y)
 
 # [ToDo] Use microbenchmark 10 times to check the timing of your fitLASSO function above with 60 tuning parameters
 microbenchmark(
-  standardizeXY(X,Y)
+  (standardizeXY(X,Y)
 )
 
 new<-standardizeXY(X,Y)
