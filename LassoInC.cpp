@@ -27,23 +27,7 @@ double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::
 // [[Rcpp::export]]
 arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, double lambda, const arma::colvec& beta_start, double eps = 0.001){
   // Your function code goes here
-  if(is.null(beta_start)){
-    beta_start = rep(0,ncol(X));
-  }
-  
-  beta = beta_update = beta_start;
-  eps_check = 100;
-  r = Ytilde - Xtilde * beta_start;
-  
-  while(abs(eps_check) > eps){
-    
-    for(j in 1:ncol(Xtilde)){
-      beta_update[j] = soft((beta[j] + crossprod(X[,j],r) / n),lambda);
-      r <- r + X[,j] * (beta[j] - beta_update[j]);
-    }
-    eps_check = lasso(Xtilde,Ytilde,beta,lambda) - (fmin <- lasso(Xtilde,Ytilde,beta_update,lambda));
-      beta = beta_update;
-  }
+
 }  
 
 // Lasso coordinate-descent on standardized data with supplied lambda_seq. 

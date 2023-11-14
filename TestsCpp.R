@@ -11,6 +11,10 @@ source("LassoFunctions.R")
 
 # Do at least 2 tests for soft-thresholding function below. You are checking output agreements on at least 2 separate inputs
 #################################################
+# Super simple test to see if my function even works
+soft_c(3,2)
+soft_c(1,2)
+soft_c(-3,2)
 
 
 # Do at least 2 tests for lasso objective function below. You are checking output agreements on at least 2 separate inputs
