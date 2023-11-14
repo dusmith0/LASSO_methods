@@ -216,7 +216,7 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
     Ytest <- Y[fold_ids == fold]
     
     out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
-    errors[fold_ids == fold, fold] <- (Ytest - out$beta0_vec[1,] - Xtest %*% out$beta0_vec[-1,]) 
+    errors[fold_ids == fold, fold] <- (Ytest - out$beta0_vec[1,] - crossprod(Xtest, out$beta0_vec[-1,])) ^ 2
   }
   cvm <- colMeans(errors)
   
