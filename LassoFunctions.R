@@ -100,13 +100,14 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   while(abs(eps_check) > eps){
     
     for(j in 1:ncol(Xtilde)){
-      beta_update[j] <- soft((beta[j] + crossprod(Xtilde[,j],r) / n),lambda)
-      r <- r + X[,j] * (beta[j] - beta_update[j])
+      beta_update[j] <- soft2((beta[j] + crossprod(Xtilde[,j],r) / n),lambda)
+      r <- r + Xtilde[,j] * (beta[j] - beta_update[j])
     }
 
-    eps_check <- lasso(Xtilde,Ytilde,beta,lambda) - (fmin <- lasso(Xtilde,Ytilde,beta_update,lambda))
+    eps_check <- lasso(Xtilde,Ytilde,beta,lambda) - (lasso(Xtilde,Ytilde,beta_update,lambda))
     beta <- beta_update
   }
+  fmin <- lasso(Xtilde,Ytilde,beta_update,lambda)
   # Return 
   # beta - the solution (a vector)
   # fmin - optimal function value (value of objective at beta, scalar)
@@ -210,14 +211,14 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   # and perform any additional calculations needed for CV(lambda) and SE_CV(lambda)
   errors <- matrix(NA,nrow = nrow(X),ncol = n_lambda)
   for(fold in 1:k){
-    Xtrain <- X[fold_ids != fold, ]
+    Xtrain <- X[fold_ids != fold,]
     Ytrain <- Y[fold_ids != fold]
     
     Xtest <- X[fold_ids == fold,]
     Ytest <- Y[fold_ids == fold]
     
     out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
-    errors[fold_ids == fold, fold] <- (Ytest - out$beta0_vec[1,] - crossprod(Xtest, out$beta0_vec[-1,])) ^ 2
+    errors[fold_ids == fold, fold] <- (1 / nrow(Xtest)) * (Ytest - out$beta0_vec[-1,] - crossprod(Xtest, out$beta0_vec[-1,])) ^ 2
   }
   cvm <- colMeans(errors)
   
@@ -225,6 +226,7 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   lambda_min <- min(cvm)
 
   # [ToDo] Find lambda_1SE
+  
   
   
   # Return output
