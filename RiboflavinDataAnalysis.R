@@ -1,5 +1,5 @@
 # Load the riboflavin data
-
+library(microbenchmark)
 # Uncomment below to install hdi package if you don't have it already; 
 # install.packages("hdi") 
 library(hdi)
@@ -19,30 +19,17 @@ Y = riboflavin$y
 source("LassoFunctions.R")
 
 # [ToDo] Use your fitLASSO function on the riboflavin data with 60 tuning parameters
-fitLASSO(X,Y)
-lambda <- .01
-microbenchmark(
-new <- fitLASSOstandardized(Xtilde, Ytilde, lambda, beta_start = NULL, eps = 0.001),times = 1L
-)
-microbenchmark(
-  new2 <- fitLASSOstandardized(Xtilde, Ytilde, lambda, beta_start = new$beta, eps = 0.001),times = 1L
-)
+out <- fitLASSO(X,Y)
+
 # [ToDo] Based on the above output, plot the number of non-zero elements in each beta versus the value of tuning parameter
 
 # [ToDo] Use microbenchmark 10 times to check the timing of your fitLASSO function above with 60 tuning parameters
 microbenchmark(
-  standardizeXY(X,Y)
+  fitLASSO(X,Y),times=10L
 )
 
-new<-standardizeXY(X,Y)
-lambda <- .5
-microbenchmark(##2 seconds
-fitLASSOstandardized(new$Xtilde,new$Ytilde,lambda,beta_start = NULL, eps = .001),times=1L
-)
-microbenchmark(
-fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq=NULL,n_lambda = 5,eps=.001),times=1L
-)
 # [ToDo] Report your median timing in the comments here: (~5.8 sec for Irina on her laptop)
+# Mine median time was 3.623079 seconds :D I finally met the speed requirements!!!
 
 # [ToDo] Use cvLASSO function on the riboflavin data with 30 tuning parameters (just 30 to make it faster)
 
