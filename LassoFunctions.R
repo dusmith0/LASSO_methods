@@ -7,13 +7,12 @@ standardizeXY <- function(X, Y){
   Ytilde <- Y - Ymean
   
   # [ToDo] Center and scale X
-  n <- nrow(X)
   Xmeans <- colMeans(X)
   Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
-  weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
+  weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / nrow(X)))
   #Xtilde = scale(X)* sqrt(n/(n-1))
   
-  normsX <- colSums(Xcentered ^ 2)/n
+  normsX <- colSums(Xcentered ^ 2)/nrow(X)
   Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
 
   #Xcentered <- scale(X,scale = FALSE)
@@ -31,11 +30,8 @@ standardizeXY <- function(X, Y){
 
 # [ToDo] Soft-thresholding of a scalar a at level lambda 
 # [OK to have vector version as long as works correctly on scalar; will only test on scalars]
-soft <- function(a, lambda){
-  ifelse(a > lambda,return(a - lambda),ifelse(a < -lambda, return(a + lambda), return(0)))
-}
 
-soft2 <- function(a,lambda){ #I would like to test which is faster.
+soft <- function(a,lambda){ #I would like to test which is faster.
   if(a > lambda){
     return(a - lambda)
   }else if(a < -lambda){
@@ -93,6 +89,7 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   # Stop when the difference between objective functions is less than eps for the first time.
   # For example, if you have 3 iterations with objectives 3, 1, 0.99999,
   # your should return fmin = 0.99999, and not have another iteration
+  n = length(Ytilde)
   beta <- beta_update <- beta_start
   eps_check <- 100
   r <- Ytilde - Xtilde %*% beta_start
@@ -100,7 +97,7 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   while(abs(eps_check) > eps){
     
     for(j in 1:ncol(Xtilde)){
-      beta_update[j] <- soft2((beta[j] + crossprod(Xtilde[,j],r) / n),lambda)
+      beta_update[j] <- soft((beta[j] + crossprod(Xtilde[,j],r) / n),lambda)
       r <- r + Xtilde[,j] * (beta[j] - beta_update[j])
     }
 
@@ -180,7 +177,10 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   beta_mat <- seq$beta_mat
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
-  beta_original <- diag(1/sqrt(new$normsX)) %*% beta_mat
+  Xcentered <- X - matrix(new$Xmeans, nrow(X), ncol(X), byrow = TRUE)
+  normsX <- colSums(Xcentered ^ 2)/nrow(X)  
+  
+  beta_original <- diag(1/sqrt(normsX)) %*% beta_mat
   beta_intercept <- mean(Y) - colSums(colMeans(X) * beta_original)
   beta0_vec <- rbind(beta_intercept,beta_mat)
   # Return output
