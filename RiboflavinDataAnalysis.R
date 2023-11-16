@@ -22,6 +22,8 @@ source("LassoFunctions.R")
 out <- fitLASSO(X,Y)
 
 # [ToDo] Based on the above output, plot the number of non-zero elements in each beta versus the value of tuning parameter
+non_zero <- colSums(out$beta0_vec != 0)
+plot(out$lambda_seq,non_zero)
 
 # [ToDo] Use microbenchmark 10 times to check the timing of your fitLASSO function above with 60 tuning parameters
 microbenchmark(
