@@ -26,9 +26,32 @@ double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::
 
 // Lasso coordinate-descent on standardized data with one lamdba. Returns a vector beta.
 // [[Rcpp::export]]
-arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, double lambda, const arma::colvec& beta_start, double eps = 0.001){
+//arma::colvec
+int fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, double lambda, const arma::colvec& beta_start, double eps = 0.001){
   // Your function code goes here
 
+  // Do not forget to include a method for assinging beta_start
+  int n = Ytilde.size();
+  arma::colvec beta = beta_start;
+  arma::colvec beta_update = beta_start;
+  double eps_check = -.4456;
+  arma::colvec r = Ytilde - Xtilde * beta_start;
+  
+  //while (fabs(eps_check) > eps){
+    
+  
+    for(int j = 1; j <= n; ++j){
+      std::cout << j << "\n";
+  //    beta_update[j] <- soft((beta[j] + crossprod(Xtilde[,j],r) / n),lambda)
+  //    r <- r + Xtilde[,j] * (beta[j] - beta_update[j])
+  //  }
+    
+  //  eps_check <- lasso_c(Xtilde,Ytilde,beta,lambda) - lasso_c(lasso(Xtilde,Ytilde,beta_update,lambda))
+  //    beta <- beta_update
+  //}
+    }
+  //}
+  //return eps_check;
 }  
 
 // Lasso coordinate-descent on standardized data with supplied lambda_seq. 
@@ -38,3 +61,8 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
 arma::mat fitLASSOstandardized_seq_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& lambda_seq, double eps = 0.001){
   // Your function code goes here
 }
+
+
+
+
+
