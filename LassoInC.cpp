@@ -18,19 +18,11 @@ double soft_c(double a, double lambda){
 // [[Rcpp::export]]
 double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta, double lambda){
   // Your function code goes here
-  int n = sizeof(Ytilde);
+  int n = Ytilde.size();
   double obj = sum(pow(Ytilde - Xtilde * beta,2))/(2 * n) + lambda * sum(arma::abs(beta));
   return obj;
 }
 
-// Lasso objective function, returns scalar
-// [[Rcpp::export]]
-double lasso_c2(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta, double lambda){
-  // Your function code goes here
-  int n = sizeof(Ytilde);
-  double obj = sum(pow(Ytilde - Xtilde * beta,2))/(2 * n) + lambda * sum(arma::abs(beta));
-  return obj;
-}
 
 // Lasso coordinate-descent on standardized data with one lamdba. Returns a vector beta.
 // [[Rcpp::export]]
