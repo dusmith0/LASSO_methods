@@ -11,14 +11,9 @@ standardizeXY <- function(X, Y){
   Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / nrow(X)))
   #Xtilde = scale(X)* sqrt(n/(n-1))
-  
-  normsX <- colSums(Xcentered ^ 2)/nrow(X)
-  Xtilde <- Xcentered %*% diag(1/sqrt(normsX))
+  normsX <- colSums(Xcentered ^ 2) / nrow(X)
+  Xtilde <- Xcentered %*% diag(1 / sqrt(normsX))
 
-  #Xcentered <- scale(X,scale = FALSE)
-  #weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / n))
-  #Xtilde <- scale(Xcentered, center = FALSE, scale = weights)
-  
   # Return:
   # Xtilde - centered and appropriately scaled X
   # Ytilde - centered Y
@@ -39,10 +34,6 @@ soft <- function(a,lambda){ #I would like to test which is faster.
   }else{
     return(0)
   }
-}
-
-soft3 <- function(a,lambda){
-  sign(a) * max(abs(a) - lambda,0)
 }
 
 # [ToDo] Calculate objective function of lasso given current values of Xtilde, Ytilde, beta and lambda
@@ -82,14 +73,13 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
     beta_start <- rep(0,ncol(X))
   }else if(ncol(Xtilde) != length(beta_start)){
     stop(paste("Warning: Please input a beta_start length that matched the number or columns in X"))
-    
   }
   
   #[ToDo]  Coordinate-descent implementation. 
   # Stop when the difference between objective functions is less than eps for the first time.
   # For example, if you have 3 iterations with objectives 3, 1, 0.99999,
   # your should return fmin = 0.99999, and not have another iteration
-  n = length(Ytilde)
+  n <- length(Ytilde)
   beta <- beta_update <- beta_start
   eps_check <- 100
   r <- Ytilde - Xtilde %*% beta_start
@@ -104,7 +94,9 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
     eps_check <- lasso(Xtilde,Ytilde,beta,lambda) - (lasso(Xtilde,Ytilde,beta_update,lambda))
     beta <- beta_update
   }
+  
   fmin <- lasso(Xtilde,Ytilde,beta_update,lambda)
+  
   # Return 
   # beta - the solution (a vector)
   # fmin - optimal function value (value of objective at beta, scalar)
@@ -170,19 +162,22 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
 fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   # [ToDo] Center and standardize X,Y based on standardizeXY function
   new <- standardizeXY(X,Y)
+  
   # [ToDo] Fit Lasso on a sequence of values using fitLASSOstandardized_seq
   # (make sure the parameters carry over)
   seq <- fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
   lambda_seq <- seq$lambda_seq
   beta_mat <- seq$beta_mat
+  
   # [ToDo] Perform back scaling and centering to get original intercept and coefficient vector
   # for each lambda
   Xcentered <- X - matrix(new$Xmeans, nrow(X), ncol(X), byrow = TRUE)
   normsX <- colSums(Xcentered ^ 2)/nrow(X)  
   
-  beta_original <- diag(1/sqrt(normsX)) %*% beta_mat
+  beta_original <- diag(1 / sqrt(normsX)) %*% beta_mat
   beta_intercept <- mean(Y) - colSums(colMeans(X) * beta_original)
   beta0_vec <- rbind(beta_intercept,beta_mat)
+  
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
   # beta_mat - p x length(lambda_seq) matrix of corresponding solutions at each lambda value (original data without center or scale)
@@ -202,6 +197,7 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
 cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NULL, eps = 0.001){
   # [ToDo] Fit Lasso on original data using fitLASSO
   fitLASSO(X = X, Y = Y, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+  
   # [ToDo] If fold_ids is NULL, split the data randomly into k folds.
   # If fold_ids is not NULL, split the data according to supplied fold_ids.
   if(is.null(fold_ids)){
