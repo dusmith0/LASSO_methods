@@ -191,7 +191,7 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
 # eps - precision level for convergence assessment, default 0.001
 cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NULL, eps = 0.001){
   # [ToDo] Fit Lasso on original data using fitLASSO
-  fitLASSO(X = X, Y = Y, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+  seq <- fitLASSO(X = X, Y = Y, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
   
   # [ToDo] If fold_ids is NULL, split the data randomly into k folds.
   # If fold_ids is not NULL, split the data according to supplied fold_ids.
@@ -200,7 +200,7 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   }
   # [ToDo] Calculate LASSO on each fold using fitLASSO,
   # and perform any additional calculations needed for CV(lambda) and SE_CV(lambda)
-  errors <- matrix(NA,nrow = nrow(X),ncol = n_lambda)
+  errors <- matrix(NA,nrow = k,ncol = n_lambda)
   for(fold in 1:k){
     Xtrain <- X[fold_ids != fold,]
     Ytrain <- Y[fold_ids != fold]
@@ -209,16 +209,21 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
     Ytest <- Y[fold_ids == fold]
     
     out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
-    errors[fold_ids == fold, fold] <- (1 / nrow(Xtest)) * (Ytest - out$beta0_vec[-1,] - crossprod(Xtest, out$beta0_vec[-1,])) ^ 2
+    errors[fold,] <- (1 / nrow(Xtest)) * colSums(Ytest - out$beta0_vec[1,fold] - (Xtest %*% out$beta0_vec[-1,])) ^ 2
   }
   cvm <- colMeans(errors)
   
   # [ToDo] Find lambda_min
-  lambda_min <- min(cvm)
+  lambda_min <- seq$lambda_seq[which(cvm == min(cvm))]
 
   # [ToDo] Find lambda_1SE
+  for (fold in 1:k){
+    cv_folds[fold, ] = colMeans(errors_all[fold_ids == fold, ])
+  }
   
+  cvse = apply(cv_folds, 2, function(x) sd(x)/sqrt(K))
   
+  plot(seq$lambda_seq,cvm)
   
   # Return output
   # Output from fitLASSO on the whole data

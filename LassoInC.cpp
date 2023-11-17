@@ -14,6 +14,8 @@ double soft_c(double a, double lambda){
     return(0);
   }
 }
+
+
 // Lasso objective function, returns scalar
 // [[Rcpp::export]]
 double lasso_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& beta, double lambda){
@@ -33,13 +35,15 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
   int n = Ytilde.size();
   arma::colvec beta; //= beta_start;
   arma::colvec beta_update;// = beta_start;
-  double eps_check = -.4456;
+  double eps_check = 100;
   arma::colvec r = Ytilde - Xtilde * beta_start;
+ 
   
   while (fabs(eps_check) > eps){
     
     for(int j = 1; j <= n; ++j){
-      beta_update(j) = soft_c((beta(j) + Xtilde.col(j-1).t()*r / n),lambda);
+      double a = (beta(j) + Xtilde.col(j-1).t()*r / n); //This is angree with me because the input is not a double?
+      beta_update(j) = soft_c(a,lambda);
       r = r + Xtilde.col(j-1) * (beta(j) - beta_update(j));
     }
     
