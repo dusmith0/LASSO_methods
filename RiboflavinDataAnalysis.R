@@ -36,4 +36,4 @@ microbenchmark(
 # [ToDo] Use cvLASSO function on the riboflavin data with 30 tuning parameters (just 30 to make it faster)
 
 # [ToDo] Based on the above output, plot the value of CV(lambda) versus tuning parameter. Note that this will change with each run since the folds are random, this is ok.
-
+plot(seq$lambda_seq,cvm)

@@ -33,8 +33,8 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
 
   // Do not forget to include a method for assigning beta_start
   int n = Ytilde.size();
-  arma::colvec beta; //= beta_start;
-  arma::colvec beta_update;// = beta_start;
+  arma::colvec beta = beta_start;
+  arma::colvec beta_update = beta_start;
   double eps_check = 100;
   arma::colvec r = Ytilde - Xtilde * beta_start;
  
@@ -42,9 +42,11 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
   while (fabs(eps_check) > eps){
     
     for(int j = 1; j <= n; ++j){
-      double a = (beta(j) + Xtilde.col(j-1).t()*r / n); //This is angree with me because the input is not a double?
+      arma::colvec mat = (beta(j-1) + arma::cross(Xtilde.col(j-1),r) / n); 
+      double a = mat[0];
       beta_update(j) = soft_c(a,lambda);
-      r = r + Xtilde.col(j-1) * (beta(j) - beta_update(j));
+    
+      r = r + Xtilde.col(j-1) * (beta(j-1) - beta_update(j-1));
     }
     
       eps_check = lasso_c(Xtilde,Ytilde,beta,lambda) - lasso_c(Xtilde,Ytilde,beta_update,lambda);
@@ -60,6 +62,7 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
 // [[Rcpp::export]]
 arma::mat fitLASSOstandardized_seq_c(const arma::mat& Xtilde, const arma::colvec& Ytilde, const arma::colvec& lambda_seq, double eps = 0.001){
   // Your function code goes here
+  
 }
 
 

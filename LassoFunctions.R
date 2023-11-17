@@ -223,8 +223,6 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   
   cvse = apply(cv_folds, 2, function(x) sd(x)/sqrt(K))
   
-  plot(seq$lambda_seq,cvm)
-  
   # Return output
   # Output from fitLASSO on the whole data
   # lambda_seq - the actual sequence of tuning parameters used
