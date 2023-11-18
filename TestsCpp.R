@@ -6,7 +6,6 @@ library(testthat)
 
 # Source your C++ funcitons
 sourceCpp("LassoInC.cpp")
-
 # Source your LASSO functions from HW4 (make sure to move the corresponding .R file in the current project folder)
 source("LassoFunctions.R")
 
@@ -56,12 +55,33 @@ source("LassoFunctions.R")
   
   new <- standardizeXY(X,Y)
   lambda <- .04
+  beta <- rep(.2,ncol(new$Xtilde))
   expect_equal(lasso_c(new$Xtilde,new$Ytilde,beta,lambda),lasso(new$Xtilde,new$Ytilde,beta,lambda))
     #Again no value was found so the functions are equal.
   
 # Do at least 2 tests for fitLASSOstandardized function below. You are checking output agreements on at least 2 separate inputs
 #################################################
-
+  ## Test one being done on the Example 2 data set from the notes. 
+  n = 50
+  beta = c(1, 0.5)
+  beta0 = 2 
+  p = length(beta)
+  sigma = 0.4 
+  
+  library(mnormt)
+  set.seed(983645) 
+  
+  Sigma = matrix(0.7, p, p) + diag(rep(1-0.7, p)) 
+  X = rmnorm(n, mean = rep(0, p), varcov = Sigma) 
+  
+  Y = beta0 + X %*% beta + sigma * rnorm(n)
+  lambda <- .4 
+  new <- standardizeXY(X,Y)
+  beta_start <- rep(0,ncol(X))
+  
+  fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001)
+  fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001)
+  
 # Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
 ######################################################################
 

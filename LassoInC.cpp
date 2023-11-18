@@ -32,19 +32,20 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
   // Your function code goes here
 
   // Do not forget to include a method for assigning beta_start
+  int m = beta_start.size();
   int n = Ytilde.size();
   arma::colvec beta = beta_start;
   arma::colvec beta_update = beta_start;
   double eps_check = 100;
   arma::colvec r = Ytilde - Xtilde * beta_start;
  
+  int j = 1;
+  while (abs(eps_check) > eps){
   
-  while (fabs(eps_check) > eps){
-    
-    for(int j = 1; j <= n; ++j){
-      arma::colvec mat = (beta(j-1) + arma::cross(Xtilde.col(j-1),r) / n); 
+    for(int j = 1; j <= m; j++){
+      arma::colvec mat = (beta(j-1) + Xtilde.col(j-1).t() * r / n); 
       double a = mat[0];
-      beta_update(j) = soft_c(a,lambda);
+      beta_update(j-1) = soft_c(a,lambda);
     
       r = r + Xtilde.col(j-1) * (beta(j-1) - beta_update(j-1));
     }
