@@ -79,8 +79,8 @@ source("LassoFunctions.R")
   new <- standardizeXY(X,Y)
   beta_start <- rep(0,ncol(X))
   
-  fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001)
-  fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001)
+  expect_equal(fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001),
+  fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001))
   
 # Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
 ######################################################################

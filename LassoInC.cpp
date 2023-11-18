@@ -42,7 +42,7 @@ arma::colvec fitLASSOstandardized_c(const arma::mat& Xtilde, const arma::colvec&
   int j = 1;
   while (abs(eps_check) > eps){
   
-    for(int j = 1; j <= m; j++){
+    for(int j = 1; j <= m; ++j){
       arma::colvec mat = (beta(j-1) + Xtilde.col(j-1).t() * r / n); 
       double a = mat[0];
       beta_update(j-1) = soft_c(a,lambda);
