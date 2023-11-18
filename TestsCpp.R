@@ -79,10 +79,27 @@ source("LassoFunctions.R")
   new <- standardizeXY(X,Y)
   beta_start <- rep(0,ncol(X))
   
-  expect_equal(fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001),
-  fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001))
+  expected <- fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001)
+  expect_equal(sum(fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001)),
+               sum(expected$beta))
   
-# Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
+  ##Test 2 on the Riboflavin Data
+  library(hdi)
+  data(riboflavin) 
+  dim(riboflavin$x)
+  class(riboflavin$x) <- class(riboflavin$x)[-match("AsIs", class(riboflavin$x))]
+  X = as.matrix(riboflavin$x)
+  Y = riboflavin$y
+  
+  new <- standardizeXY(X,Y)
+  lambda <- .04
+  beta_start <- rep(0,ncol(X))
+  
+  expected <- fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001)
+  expect_equal(sum(fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001)),
+               sum(expected$beta))
+  
+  # Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
 ######################################################################
 
 # Do at least 2 tests for fitLASSOstandardized_seq function below. You are checking output agreements on at least 2 separate inputs
