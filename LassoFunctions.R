@@ -10,7 +10,6 @@ standardizeXY <- function(X, Y){
   Xmeans <- colMeans(X)
   Xcentered <- X - matrix(Xmeans, nrow(X), ncol(X), byrow = TRUE)
   weights <- apply(Xcentered,2,function(Xcentered) sqrt(crossprod((Xcentered),Xcentered) / nrow(X)))
-  #Xtilde = scale(X)* sqrt(n/(n-1))
   normsX <- colSums(Xcentered ^ 2) / nrow(X)
   Xtilde <- Xcentered %*% diag(1 / sqrt(normsX))
 
@@ -196,7 +195,7 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   # [ToDo] If fold_ids is NULL, split the data randomly into k folds.
   # If fold_ids is not NULL, split the data according to supplied fold_ids.
   if(is.null(fold_ids)){
-    fold_ids <- sample(1:n) %% k + 1
+    fold_ids <- sample(1:nrow(X)) %% k + 1
   }
   # [ToDo] Calculate LASSO on each fold using fitLASSO,
   # and perform any additional calculations needed for CV(lambda) and SE_CV(lambda)
@@ -209,7 +208,12 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
     Ytest <- Y[fold_ids == fold]
     
     out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
-    errors[fold,] <- (1 / nrow(Xtest)) * colSums(Ytest - out$beta0_vec[1,fold] - (Xtest %*% out$beta0_vec[-1,])) ^ 2
+    #errors[fold,] <- (1 / nrow(Xtest)) * colSums(Ytest - out$beta0_vec[1,fold] - (Xtest %*% out$beta0_vec[-1,fold])) ^ 2
+    #for(row in 1:ncol(out$beta0_vec)){
+    Xtest_int <- cbind(rep(1,nrow(Xtest)),Xtest)
+    #errors[fold,] <- colSums(Ytest - out$beta0_vec[1,] - (Xtest %*% out$beta0_vec[-1,]))^2 
+    errors[fold,] <- colSums(Ytest - (Xtest_int %*% out$beta0_vec))^2 
+    #}
   }
   cvm <- colMeans(errors)
   
