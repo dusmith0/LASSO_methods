@@ -123,9 +123,12 @@ source("LassoFunctions.R")
   lambda_max <- max(crossprod(new$Xtilde,new$Ytilde)/nrow(new$Xtilde))
   lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = 30))
   
+  expected <- fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = NULL, n_lambda = 30, eps = 0.001)
+  expect_equal(sum(fitLASSOstandardized_seq_c(new$Xtilde,new$Ytilde,lambda_seq,eps = .001)),(sum(expected$beta_mat)))
+  #This test is slightly off. The betas are exaclty the same unitl the 7th interation.
+  #Then for some reason the dicimals are off at around the 5th decimal place. It seems to become more off as the iterations increase. 
   
-  fitLASSOstandardized_seq_c(new$Xtilde,new$Ytilde,lambda_seq,eps = .001)
-  fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = NULL, n_lambda = 30, eps = 0.001)
+  
 # Do microbenchmark on fitLASSOstandardized_seq vs fitLASSOstandardized_seq_c
 ######################################################################
 

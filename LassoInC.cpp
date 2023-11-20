@@ -68,6 +68,7 @@ arma::mat fitLASSOstandardized_seq_c(const arma::mat& Xtilde, const arma::colvec
   beta_mat = beta_mat.zeros(Xtilde.n_cols,lambda_seq.size());
   arma::colvec beta_start;
   beta_start = beta_start.zeros(Xtilde.n_cols);
+  int k = 1;
   for(int k = 1; k <= length; ++k){
     arma::colvec out = fitLASSOstandardized_c(Xtilde, Ytilde, lambda_seq[k-1], beta_start, eps = 0.001);
     arma::colvec beta_start = out;
