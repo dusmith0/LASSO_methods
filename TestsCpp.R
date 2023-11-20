@@ -104,7 +104,28 @@ source("LassoFunctions.R")
 
 # Do at least 2 tests for fitLASSOstandardized_seq function below. You are checking output agreements on at least 2 separate inputs
 #################################################
-
+  n = 50
+  beta = c(1, 0.5)
+  beta0 = 2 
+  p = length(beta)
+  sigma = 0.4 
+  
+  library(mnormt)
+  set.seed(983645) 
+  
+  Sigma = matrix(0.7, p, p) + diag(rep(1-0.7, p)) 
+  X = rmnorm(n, mean = rep(0, p), varcov = Sigma) 
+  
+  Y = beta0 + X %*% beta + sigma * rnorm(n)
+  lambda <- .4 
+  new <- standardizeXY(X,Y)
+  
+  lambda_max <- max(crossprod(new$Xtilde,new$Ytilde)/nrow(new$Xtilde))
+  lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = 30))
+  
+  
+  fitLASSOstandardized_seq_c(new$Xtilde,new$Ytilde,lambda_seq,eps = .001)
+  fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = NULL, n_lambda = 30, eps = 0.001)
 # Do microbenchmark on fitLASSOstandardized_seq vs fitLASSOstandardized_seq_c
 ######################################################################
 
