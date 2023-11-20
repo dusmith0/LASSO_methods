@@ -193,6 +193,9 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
 cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NULL, eps = 0.001){
   # [ToDo] Fit Lasso on original data using fitLASSO
   seq <- fitLASSO(X = X, Y = Y, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
+  lambda_seq <- seq$lambda_seq
+  beta_mat <- seq$beta_mat
+  beta0_vec <- seq$beta0_vec
   
   # [ToDo] If fold_ids is NULL, split the data randomly into k folds.
   # If fold_ids is not NULL, split the data according to supplied fold_ids.
@@ -209,25 +212,21 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
     Xtest <- X[fold_ids == fold,]
     Ytest <- Y[fold_ids == fold]
     
-    out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
-    #errors[fold,] <- (1 / nrow(Xtest)) * colSums(Ytest - out$beta0_vec[1,fold] - (Xtest %*% out$beta0_vec[-1,fold])) ^ 2
-    #for(row in 1:ncol(out$beta0_vec)){
+    out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = seq$lambda_seq, n_lambda = n_lambda, eps = eps)
     Xtest_int <- cbind(rep(1,nrow(Xtest)),Xtest)
-    #errors[fold,] <- colSums(Ytest - out$beta0_vec[1,] - (Xtest %*% out$beta0_vec[-1,]))^2 
-    errors[fold,] <- colSums(Ytest - (Xtest_int %*% out$beta0_vec))^2 
-    #}
+    errors[fold,] <- colSums((Ytest - (Xtest_int %*% seq$beta0_vec))^2) #I added an extra () to keep the square inside the sum.
   }
   cvm <- colMeans(errors)
   
   # [ToDo] Find lambda_min
-  lambda_min <- seq$lambda_seq[which(cvm == min(cvm))]
+  min <- which(cvm == min(cvm))
+  lambda_min <- seq$lambda_seq[min]
 
   # [ToDo] Find lambda_1SE
-  for (fold in 1:k){
-    cv_folds[fold, ] = colMeans(errors_all[fold_ids == fold, ])
-  }
-  
-  cvse = apply(cv_folds, 2, function(x) sd(x)/sqrt(K))
+  cvse = apply(errors, 2, function(z) sd(z)/sqrt(k))
+  interval <- cvm[min] + cvse[min]
+  min_int <- max(cvm[which(cvm < interval)])
+  lambda_1se <- seq$lambda_seq[which(cvm == min_int)]
   
   # Return output
   # Output from fitLASSO on the whole data

@@ -34,6 +34,13 @@ microbenchmark(
 # Mine median time was 3.623079 seconds :D I finally met the speed requirements!!!
 
 # [ToDo] Use cvLASSO function on the riboflavin data with 30 tuning parameters (just 30 to make it faster)
-
+out <- cvLASSO(X ,Y, lambda_seq = NULL, n_lambda = 30, k = 5, fold_ids = NULL, eps = 0.001)
+  
 # [ToDo] Based on the above output, plot the value of CV(lambda) versus tuning parameter. Note that this will change with each run since the folds are random, this is ok.
-plot(seq$lambda_seq,cvm)
+plot(out$lambda_seq,out$cvm)
+
+
+
+
+
+
