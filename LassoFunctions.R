@@ -64,7 +64,7 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
   # If none supplied, initialize with a vector of zeros.
   # If supplied, check for compatibility with Xtilde in terms of p
   if(is.null(beta_start)){
-    beta_start <- rep(0,ncol(X))
+    beta_start <- rep(0,ncol(Xtilde))
   }else if(ncol(Xtilde) != length(beta_start)){
     stop(paste("Warning: Please input a beta_start length that matched the number or columns in X"))
   }
@@ -115,8 +115,10 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
   # If none of the supplied values satisfy the requirement,
   # print the warning message and proceed as if the values were not supplied.
   if(!is.null(lambda_seq)){
-    lambda_seq <- sort(lambda_seq,decreacing = TRUE)
-    lambda_seq <- lambda_seq[-which(lambda_seq <= 0)]
+    lambda_seq <- sort(lambda_seq,decreasing = TRUE)
+    if(any(lambda_seq <= 0)){
+      lambda_seq <- lambda_seq[-which(lambda_seq <= 0)]
+    }
   }
   
   # If lambda_seq is not supplied, calculate lambda_max 

@@ -176,7 +176,7 @@ class(riboflavin$x) <- class(riboflavin$x)[-match("AsIs", class(riboflavin$x))]
 out <- standardizeXY(riboflavin$x, riboflavin$y)
 
 # This is just to create lambda_seq, can be done faster, but this is simpler
-outl <- fitLASSOstandardized_seq(out$Xtilde, out$Ytilde, n_lambda = 30)
+outl <- fitLASSOstandardized_seq(out$Xtilde, out$Ytilde, lambda_seq = NULL, n_lambda = 30, eps = 0.001)
 
 # The code below should assess your speed improvement on riboflavin data
 microbenchmark(
@@ -184,3 +184,6 @@ microbenchmark(
   fitLASSOstandardized_seq_c(out$Xtilde, out$Ytilde, outl$lambda_seq),
   times = 10
 )
+
+## The c script runs at 397 milliseconds, while the R script runs at 1494 seconds. 
+
