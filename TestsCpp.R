@@ -3,7 +3,7 @@
 library(Rcpp)
 library(RcppArmadillo)
 library(testthat)
-
+library(microbenchmark)
 # Source your C++ funcitons
 sourceCpp("LassoInC.cpp")
 # Source your LASSO functions from HW4 (make sure to move the corresponding .R file in the current project folder)
@@ -101,9 +101,17 @@ source("LassoFunctions.R")
   
   # Do microbenchmark on fitLASSOstandardized vs fitLASSOstandardized_c
 ######################################################################
-
+microbenchmark(
+  fitLASSOstandardized(new$Xtilde, new$Ytilde, lambda, beta_start = NULL, eps = 0.001),
+  fitLASSOstandardized_c(new$Xtilde, new$Ytilde, lambda, beta_start, eps = 0.001), times = 10L
+)
+  
+  ## The cpp script clocked at 23 milliseconds, instead of 608 milliseconds for the R script. 
+  
+  
 # Do at least 2 tests for fitLASSOstandardized_seq function below. You are checking output agreements on at least 2 separate inputs
 #################################################
+  ## Test one being done on the Example 2 data set from the notes. 
   n = 50
   beta = c(1, 0.5)
   beta0 = 2 
@@ -129,9 +137,33 @@ source("LassoFunctions.R")
   #Then for some reason the dicimals are off at around the 5th decimal place. It seems to become more off as the iterations increase. 
   
   
+  ##Test 2 on the Riboflavin Data
+  library(hdi)
+  data(riboflavin) 
+  dim(riboflavin$x)
+  class(riboflavin$x) <- class(riboflavin$x)[-match("AsIs", class(riboflavin$x))]
+  X = as.matrix(riboflavin$x)
+  Y = riboflavin$y
+  
+  new <- standardizeXY(X,Y)
+  
+  lambda_max <- max(crossprod(new$Xtilde,new$Ytilde)/nrow(new$Xtilde))
+  lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = 30))
+
+  expected <- fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = NULL, n_lambda = 30, eps = 0.001)
+  expect_equal(sum(fitLASSOstandardized_seq_c(new$Xtilde,new$Ytilde,lambda_seq,eps = .001)),(sum(expected$beta_mat)))
+  ##This one is quite a bit off. 
+  
 # Do microbenchmark on fitLASSOstandardized_seq vs fitLASSOstandardized_seq_c
 ######################################################################
-
+  ## I ran this on the data from example 2. 
+microbenchmark(
+  fitLASSOstandardized_seq(new$Xtilde,new$Ytilde,lambda_seq = NULL, n_lambda = 30, eps = 0.001),
+  fitLASSOstandardized_seq_c(new$Xtilde,new$Ytilde,lambda_seq,eps = .001), times = 10L
+)
+  
+  ## The cpp improved to 130 microseconds instead of 1640 microseconds for the R code. 
+  
 # Tests on riboflavin data
 ##########################
 require(hdi) # this should install hdi package if you don't have it already; otherwise library(hdi)
