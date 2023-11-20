@@ -214,7 +214,7 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
     
     out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = seq$lambda_seq, n_lambda = n_lambda, eps = eps)
     Xtest_int <- cbind(rep(1,nrow(Xtest)),Xtest)
-    errors[fold,] <- colSums((Ytest - (Xtest_int %*% seq$beta0_vec))^2) #I added an extra () to keep the square inside the sum.
+    errors[fold,] <- colSums((Ytest - (Xtest_int %*% out$beta0_vec))^2) #I added an extra () to keep the square inside the sum.
   }
   cvm <- colMeans(errors)
   
