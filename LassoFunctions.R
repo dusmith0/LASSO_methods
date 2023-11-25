@@ -25,7 +25,7 @@ standardizeXY <- function(X, Y){
 # [ToDo] Soft-thresholding of a scalar a at level lambda 
 # [OK to have vector version as long as works correctly on scalar; will only test on scalars]
 
-soft <- function(a,lambda){ #I would like to test which is faster.
+soft <- function(a,lambda){
   if(a > lambda){
     return(a - lambda)
   }else if(a < -lambda){
@@ -40,6 +40,7 @@ soft <- function(a,lambda){ #I would like to test which is faster.
 # Ytilde - centered Y, n x 1
 # lamdba - tuning parameter
 # beta - value of beta at which to evaluate the function
+
 lasso <- function(Xtilde, Ytilde, beta, lambda){
   n = length(Ytilde)
   sum((Ytilde - Xtilde %*% beta) ^ 2)/(2 * n) + lambda * sum(abs(beta))
@@ -52,14 +53,17 @@ lasso <- function(Xtilde, Ytilde, beta, lambda){
 # beta_start - p vector, an optional starting point for coordinate-descent algorithm
 # eps - precision level for convergence assessment, default 0.001
 fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps = 0.001){
+  
   #[ToDo]  Check that n is the same between Xtilde and Ytilde
   if(nrow(Xtilde) != length(Ytilde)){
     stop(paste("It seems that your standardized and centered X and Y do not have the equivalent amount of rows."))
   }
+  
   #[ToDo]  Check that lambda is non-negative
   if(lambda < 0){
     stop(paste("Warning: Please input a postive or zero penalty value."))
   }
+  
   #[ToDo]  Check for starting point beta_start. 
   # If none supplied, initialize with a vector of zeros.
   # If supplied, check for compatibility with Xtilde in terms of p
@@ -104,11 +108,14 @@ fitLASSOstandardized <- function(Xtilde, Ytilde, lambda, beta_start = NULL, eps 
 # n_lambda - length of desired tuning parameter sequence,
 #             is only used when the tuning sequence is not supplied by the user
 # eps - precision level for convergence assessment, default 0.001
+
 fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
+  
   # [ToDo] Check that n is the same between Xtilde and Ytilde
   if(nrow(Xtilde) != length(Ytilde)){
     stop(paste("It seems that your standardized and centered X and Y do not have the equivalent amount of rows."))
   }
+  
   # [ToDo] Check for the user-supplied lambda-seq (see below)
   # If lambda_seq is supplied, only keep values that are >= 0,
   # and make sure the values are sorted from largest to smallest.
@@ -128,6 +135,7 @@ fitLASSOstandardized_seq <- function(Xtilde, Ytilde, lambda_seq = NULL, n_lambda
     lambda_max <- max(crossprod(Xtilde,Ytilde)/nrow(Xtilde))
     lambda_seq <- exp(seq(log(lambda_max), log(0.01), length = n_lambda))
   }
+  
   # [ToDo] Apply fitLASSOstandardized going from largest to smallest lambda 
   # (make sure supplied eps is carried over). 
   beta_mat <- matrix(0,nrow = ncol(Xtilde), ncol = length(lambda_seq))
@@ -192,6 +200,7 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
 # fold_ids - (optional) vector of length n specifying the folds assignment (from 1 to max(folds_ids)), if supplied the value of k is ignored 
 # eps - precision level for convergence assessment, default 0.001
 cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NULL, eps = 0.001){
+ 
   # [ToDo] Fit Lasso on original data using fitLASSO
   seq <- fitLASSO(X = X, Y = Y, lambda_seq = lambda_seq, n_lambda = n_lambda, eps = eps)
   lambda_seq <- seq$lambda_seq
@@ -203,6 +212,7 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
   if(is.null(fold_ids)){
     fold_ids <- sample(1:nrow(X)) %% k + 1
   }
+  
   # [ToDo] Calculate LASSO on each fold using fitLASSO,
   # and perform any additional calculations needed for CV(lambda) and SE_CV(lambda)
   errors <- matrix(NA,nrow = k,ncol = n_lambda)
