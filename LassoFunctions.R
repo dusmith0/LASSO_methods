@@ -171,8 +171,9 @@ fitLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, eps = 0.001){
   normsX <- colSums(Xcentered ^ 2)/nrow(X)  
   
   beta_original <- diag(1 / sqrt(normsX)) %*% beta_mat
-  beta_intercept <- mean(Y) - colSums(colMeans(X) * beta_original)
-  beta0_vec <- rbind(beta_intercept,beta_original)
+  beta0_vec <- mean(Y) - colSums(colMeans(X) * beta_original)
+  #beta0_vec <- rbind(beta_intercept,beta_original)
+  beta_mat <- beta_original
   
   # Return output
   # lambda_seq - the actual sequence of tuning parameters used
@@ -213,8 +214,9 @@ cvLASSO <- function(X ,Y, lambda_seq = NULL, n_lambda = 60, k = 5, fold_ids = NU
     Ytest <- Y[fold_ids == fold]
     
     out <- fitLASSO(X = Xtrain, Y = Ytrain, lambda_seq = seq$lambda_seq, n_lambda = n_lambda, eps = eps)
+    beta_int <- rbind(out$beta0_vec,out$beta_mat)
     Xtest_int <- cbind(rep(1,nrow(Xtest)),Xtest)
-    errors[fold,] <- colSums((Ytest - ((Xtest_int) %*% out$beta0_vec))^2) #I added an extra () to keep the square inside the sum.
+    errors[fold,] <- (1 / nrow(Xtest)) * colSums((Ytest - ((Xtest_int) %*% beta_int))^2) #I added an extra () to keep the square inside the sum.
   }
   cvm <- colMeans(errors)
   
