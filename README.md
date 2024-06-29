@@ -1,8 +1,8 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/iSyT7Qb-)
-
-# Homework 4+5: Coordinate-descent algorithm for LASSO
+# Coordinate-descent algorithm for LASSO
 
 ## Introduction
+
+This was created to accomplish an assignment for my Reproducible Computation Course. The following is an overview of what I was expected to complete. 
 
 We consider the training data consisting of
 ![n](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n "n")
@@ -26,7 +26,7 @@ where the sample size
 ![n](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n "n")
 is small compared to the number of covariates
 ![p](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;p "p").
-We will use LASSO algorithm to fit this model (find
+I used LASSO algorithm to fit this model (find
 ![\beta_0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta_0 "\beta_0")
 and
 ![\beta](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cbeta "\beta")),
@@ -35,9 +35,9 @@ and use 5-fold cross-validation to select the tuning parameter.
 
 ## Part 1 - Implement LASSO with cross validation
 
-For this part you need to implement LASSO and 5 fold cross validation to select the tuning parameter in R.
+For this part I implemented LASSO and 5 fold cross validation to select the tuning parameter in R.
 
-1)  We will center
+1)  We first center
     ![Y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y "Y"),
     and center and scale
     ![X](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;X "X")
@@ -57,7 +57,7 @@ For this part you need to implement LASSO and 5 fold cross validation to select 
     ![n^{-1}\widetilde X_j^{\top}\widetilde X_j = 1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n%5E%7B-1%7D%5Cwidetilde%20X_j%5E%7B%5Ctop%7D%5Cwidetilde%20X_j%20%3D%201 "n^{-1}\widetilde X_j^{\top}\widetilde X_j = 1")
     (because of scaling). See class notes for more.
 
-2)  We will solve the following LASSO problem for various
+2)  Next I solved the following LASSO problem for various
     ![\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda "\lambda")
     values
 
@@ -66,7 +66,7 @@ For this part you need to implement LASSO and 5 fold cross validation to select 
     To solve LASSO, we will use coordinate-descent algorithm with **warm
     starts**.
 
-3)  We will use the
+3)  I used the
     ![K](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;K "K")-fold
     cross-validation to select
     ![\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda "\lambda"),
@@ -162,10 +162,10 @@ You will be asked to do the following:
     
 ## Part 2 - Reimplement in C++
 
-In this part, you will practice Rcpp and the use of Armadillo library by implementing the LASSO coordinate-descent algorithm from Part 1. We will only focus on `fitLASSOstandardized` functions and corresponding helpers as you will see the biggest speed improvement there. For simplicity, we will also **avoid doing any compatibility/input checks** in C++. In practice, you will often have an R code wrapper with all compatibility checks that then calls the corresponding function in C++.
+In this part, I practiced Rcpp and the use of Armadillo library by implementing the LASSO coordinate-descent algorithm from Part 1. I only focus on `fitLASSOstandardized` functions and corresponding helpers in an attempt to speed up the function. 
 
 
-## Starter code
+## Basic Overview of the functions
 
 **LassoInC.cpp** contains the starter for C++ code. You will have to modify this starter to create the following functions:
 
@@ -177,59 +177,3 @@ In this part, you will practice Rcpp and the use of Armadillo library by impleme
   
   - `fitLASSOstandardized_seq_c` - this is a *slightly modified* C++ version of the `fitLASSOstandardized` function from Part 1. The modification: it only takes used-supplied lambda sequence and it only returns matrix of $\beta$ values. You can assume that the user-supplied sequence has already been sorted from largest to smallest.
   
-All these functions should be directly available from R after executing **sourceCpp** command with corresponding source file (see **TestsCpp.R**). You are welcome to create additional C++ functions within the same file if you want, we will only explicitly test the above 4 functions. You can assume that all the inputs to these functions are correct (e.g. dimensions match, no negative tuning parameters, etc.)
-
-**TestsCpp.R**  contains starter file for testing your C++ functions against your R functions. You should do the following
-
-  - develop at least 2 tests for each function **to check equality of the corresponding outputs between your R and C++ versions**
-  - do 2 microbenchmarks comparisons as per comments
-  - do speed test on riboflavin data as coded in the end of that file
-  
-Things to keep in mind when implementing:
-
- - you will use Armadillo library classes for matrices and vectors, and because of this, the whole Armadillo library of functions is at your disposal. As it's impossible to cover all functions in class, a part of this assignment is learning how to search for needed functions on your own using [Armadillo documentation](http://arma.sourceforge.net/docs.html). Using Ctrl(Command) + F on that page with a key word for the function you need, e.g. "inverse", will help you narrow down the function list for what you need.
- 
- - one of the best ways to quickly learn how to translate the code is to study some relevant examples. In addition to examples in class, you may find the following [gallery of Rcpp and RcppArmadillo examples](https://gallery.rcpp.org) useful
-
- - test small chunks before testing larger chunks as it's harder to debug C++ code, and it's easier to miss a mistake in C++. I recommend first testing that a particular line of code does exactly what you think it does before going to the whole function
- 
- - there are many more ways in C++ code to achieve a similar outcome than in R so we will be expecting to see much more differences across the assignments. If your code is heavily based on particular examples you found online, you will be expected to indicate this in the comments
-
-
-## Grading for this assignment
-
-Your assignment will be graded based on
-
--   correctness *(50% of the grade)*
-
-Take advantage of objective function values over iterations as a way to
-indirectly check the correctness of your function. Also recall that you
-know the right solution in special cases, so you can check your function
-in those cases (i.e. when
-![\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda "\lambda")
-is very large, or when
-![\lambda = 0](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda%20%3D%200 "\lambda = 0")
-and you have a nice problem)
-
--   speed of implementations (use warm starts and coordinate descent
-    optimized for large p settings) *(30% of the grade)*
-
-You will get full points if your code is **at most twice slower**
-comparable to mine (fitLASSO with 60 tuning parameters on riboflavin
-data takes around 5.8 seconds on my laptop). You will loose 5 points for
-every fold over. You will get +5 bonus points if your **completely
-correct** code on 1st submission is faster than mine (median your
-time/median mine time \< 0.9).
-
--   code style/documentation *(10% of the grade)*
-
-You need to comment different parts of the code so it’s clear what they
-do, have good indentation, readable code with names that make sense. See
-guidelines on R style, and posted grading rubric.
-
--   version control/commit practices *(10% of the grade)*
-
-I expect you to start early on this assignment, and work gradually. You
-want to commit often, have logically organized commits with short
-description that makes sense. See guidelines on good commit practices,
-and posted grading rubric.
