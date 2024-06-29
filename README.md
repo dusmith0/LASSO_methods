@@ -18,7 +18,7 @@ supplied as matrix
 ![X \in \mathbb{R}^{n \times p}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;X%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bn%20%5Ctimes%20p%7D "X \in \mathbb{R}^{n \times p}")
 and vector
 ![Y\in\mathbb{R}^{n}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y%5Cin%5Cmathbb%7BR%7D%5E%7Bn%7D "Y\in\mathbb{R}^{n}"),
-respectively. We would like to fit linear model
+respectively. We would like to fit a linear model
 
 ![Y = \beta_0 + X\beta + \varepsilon,](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y%20%3D%20%5Cbeta_0%20%2B%20X%5Cbeta%20%2B%20%5Cvarepsilon%2C "Y = \beta_0 + X\beta + \varepsilon,")
 
@@ -55,7 +55,7 @@ For this part I implemented LASSO and 5 fold cross validation to select the tuni
     ![\widetilde X](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cwidetilde%20X "\widetilde X")
     is such that each column satisfies
     ![n^{-1}\widetilde X_j^{\top}\widetilde X_j = 1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n%5E%7B-1%7D%5Cwidetilde%20X_j%5E%7B%5Ctop%7D%5Cwidetilde%20X_j%20%3D%201 "n^{-1}\widetilde X_j^{\top}\widetilde X_j = 1")
-    (because of scaling). See class notes for more.
+    (because of scaling).
 
 2)  Next I solved the following LASSO problem for various
     ![\lambda](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Clambda "\lambda")
@@ -77,65 +77,8 @@ For this part I implemented LASSO and 5 fold cross validation to select the tuni
     ![X](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;X "X")
     and
     ![Y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y "Y")
-    based on back-scaling and back-centering (see class notes).
+    based on back-scaling and back-centering.
     
-
-## Starter code
-
-The starter code for all functions with detailed description is provided
-in **LassoFunctions.R**. The described functions should have
-input/output **exactly as specified**, but you are welcome to create any
-additional functions you need. You are not allowed to use any outside
-libraries for these functions. I encourage you to work gradually through
-the functions and perform frequent testing as many functions rely on the
-previous ones.
-
-Things to keep in mind when implementing:
-
--   You want to make sure that parameters supplied to one function are
-    correctly used in subsequent functions (i.e. the convergence level
-    ![\varepsilon](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Cvarepsilon "\varepsilon"))
-
--   You should check your code on simple examples before proceeding to
-    the data (i.e. what happens when large lambda is supplied? What
-    happens on toy example used in class?). I will use automatic tests
-    to check that your code is correct on more than just the data
-    example with different combinations of parameters.
-
--   I will test your functions speed on large
-    ![p](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;p "p"),
-    small
-    ![n](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n "n")
-    dataset (below), so you need to use coordinate-descent
-    implementation that is optimized for this scenario to pass the speed
-    requirements (see class notes). I recommend writing a correct code
-    first using whichever version of algorithm you find the easiest, and
-    then optimizing for speed (this will help avoid mistakes).
-
--   I expect it will take you some time to figure out how to split the
-    data for cross-validation. Keep in mind that the split should be
-    random, in roughly equal parts, and should work correctly with any
-    sample size
-    ![n](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n "n")
-    and any integer number of folds
-    ![K](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;K "K")
-    as long as
-    ![n\geq K](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n%5Cgeq%20K "n\geq K").
-
--   `glmnet` function within glmnet R package is probably the most
-    popular LASSO solver, however the outputs are not directly
-    comparable as glmnet does additional scaling of
-    ![Y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Y "Y")
-    to have unit variance with 1/n formula, that is
-    ![\tilde Y](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctilde%20Y "\tilde Y")
-    for glmnet will satisfy
-    ![n^{-1}\tilde Y^{\top}\tilde Y = 1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;n%5E%7B-1%7D%5Ctilde%20Y%5E%7B%5Ctop%7D%5Ctilde%20Y%20%3D%201 "n^{-1}\tilde Y^{\top}\tilde Y = 1")
-    (see Details in ? `glmnet`). However, if you impose the same
-    standardization, you may be able to use glmnet for testing. In terms
-    of speed, **glmnet** is very highly optimized with underlying
-    Fortran so it would be very fast compared to your code. On my
-    computer, glmnet with 60 tuning parameters on riboflavin dataset
-    takes around 42 milliseconds.
 
 ## Application to Riboflavin data
 
